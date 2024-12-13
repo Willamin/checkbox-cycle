@@ -10,7 +10,7 @@ const activate = (context) => {
 		const { c: lineNumber } = textEditor.selection.anchor
 		const { b: lineContents } = textEditor.document.lineAt(lineNumber)
 
-		const regex = /^(\s*)([\-\+\*]) \[([x~\s])\] (.*)$/;
+		const regex = /^(\s*)([\-\+\*]) \[([x~\s\*])\] (.*)$/;
 		const results = lineContents.match(regex);
 
 		if (results == null) {
@@ -23,7 +23,8 @@ const activate = (context) => {
 		const newStatus = {
 			' ': '~',
 			'~': 'x',
-			'x': ' ',
+			'x': '*',
+			'*': ' ',
 		}[status]
 
 		edit.replace(new vscode.Range(
