@@ -7,14 +7,14 @@ const activate = (context) => {
 			return;
 		}
 
-		const { c: lineNumber } = textEditor.selection.anchor
-		const { b: lineContents } = textEditor.document.lineAt(lineNumber)
+		const { line: lineNumber } = textEditor.selection.anchor
+		const { text: lineContents } = textEditor.document.lineAt(lineNumber)
 
 		const regex = /^(\s*)([\-\+\*]) \[([x~\s\*])\] (.*)$/;
 		const results = lineContents.match(regex);
 
 		if (results == null) {
-			vscode.window.showInformationMessage('No checkbox on this line');
+			vscode.window.showInformationMessage('No checkbox detected on this line');
 			return;
 		}
 
@@ -25,12 +25,14 @@ const activate = (context) => {
 			'~': 'x',
 			'x': '*',
 			'*': ' ',
-		}[status]
+		}[status];
+
+		const replacementLine = `${indent}${bullet} [${newStatus}] ${body}`
 
 		edit.replace(new vscode.Range(
 			new vscode.Position(lineNumber, 0),
 			new vscode.Position(lineNumber, match.length)
-		), `${indent}${bullet} [${newStatus}] ${body}`)
+		), replacementLine)
 	})
 	context.subscriptions.push(cycleCommand);
 }
